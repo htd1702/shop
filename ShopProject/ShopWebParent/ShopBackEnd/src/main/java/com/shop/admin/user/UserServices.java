@@ -31,18 +31,18 @@ public class UserServices {
 	}
 
 	public void save(User user) {
-		boolean isUpdatingUser = (user.getId()!=null);
+		boolean isUpdatingUser = (user.getId() != null);
 		if (isUpdatingUser) {
 			User existingUser = urepo.findById(user.getId()).get();
-			if(user.getPassword().isEmpty()) {
-				 user.setPassword(existingUser.getPassword());
-			}else {
+			if (user.getPassword().isEmpty()) {
+				user.setPassword(existingUser.getPassword());
+			} else {
 				encodePassword(user);
 			}
-		}else {
+		} else {
 			encodePassword(user);
 		}
-		
+
 		urepo.save(user);
 	}
 
@@ -51,14 +51,16 @@ public class UserServices {
 		user.setPassword(encodedPassword);
 	}
 
-	public boolean isEmailUnique(Integer id,String email) {
+	public boolean isEmailUnique(Integer id, String email) {
 		User userByEmail = urepo.getUserByEmail(email);
-		if(userByEmail == null) return true;
-		boolean isCreatingNew =(id==null);
-		if(isCreatingNew) {
-			if(userByEmail !=null) return false;  
-		}else {
-			if(userByEmail.getId() != id) {
+		if (userByEmail == null)
+			return true;
+		boolean isCreatingNew = (id == null);
+		if (isCreatingNew) {
+			if (userByEmail != null)
+				return false;
+		} else {
+			if (userByEmail.getId() != id) {
 				return false;
 			}
 		}
@@ -71,5 +73,13 @@ public class UserServices {
 		} catch (NoSuchElementException ex) {
 			throw new UserNotFoundException("Could not find any use with ID" + id);
 		}
+	}
+
+	public void delete(Integer id) throws UserNotFoundException {
+		Long countById = urepo.countById(id);
+		if(countById == null || countById == 0) {
+			throw new UserNotFoundException("Could not find any use with ID" + id);
+		}
+		urepo.deleteById(id);
 	}
 }
