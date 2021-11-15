@@ -3,6 +3,8 @@ package com.shop.admin.user;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import com.shop.common.entities.Role;
 import com.shop.common.entities.User;
 
 @Service
+@Transactional
 public class UserServices {
 
 	@Autowired
@@ -30,7 +33,7 @@ public class UserServices {
 		return (List<Role>) rRepo.findAll();
 	}
 
-	public void save(User user) {
+	public User save(User user) {
 		boolean isUpdatingUser = (user.getId() != null);
 		if (isUpdatingUser) {
 			User existingUser = urepo.findById(user.getId()).get();
@@ -43,7 +46,7 @@ public class UserServices {
 			encodePassword(user);
 		}
 
-		urepo.save(user);
+		return urepo.save(user);
 	}
 
 	private void encodePassword(User user) {
@@ -81,5 +84,10 @@ public class UserServices {
 			throw new UserNotFoundException("Could not find any use with ID" + id);
 		}
 		urepo.deleteById(id);
+	}
+	
+	public void updateUserEnabledStatus(Integer id, boolean enabled) {
+		urepo.updateEnabledStatus(id, enabled);
+		
 	}
 }
