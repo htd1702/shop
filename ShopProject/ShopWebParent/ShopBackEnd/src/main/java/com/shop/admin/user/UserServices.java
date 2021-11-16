@@ -6,6 +6,9 @@ import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +18,9 @@ import com.shop.common.entities.User;
 @Service
 @Transactional
 public class UserServices {
-
+	public static final int USER_PER_PAGE = 4;
 	@Autowired
-	private UserRepository urepo;
+	private UserRepository userRepo;
 
 	@Autowired
 	private RoleRepository rRepo;
@@ -26,7 +29,12 @@ public class UserServices {
 	private PasswordEncoder passwordEncoder;
 
 	public List<User> listAlls() {
-		return (List<User>) urepo.findAll();
+		return (List<User>) userRepo.findAll();
+	}
+
+	public Page<User> listByPage(int pageNum) {
+		Pageable pageable = PageRequest.of(pageNum - 1, USER_PER_PAGE);
+		return userRepo.findAll(pageable);
 	}
 
 	public List<Role> listsRoles() {
@@ -36,7 +44,7 @@ public class UserServices {
 	public User save(User user) {
 		boolean isUpdatingUser = (user.getId() != null);
 		if (isUpdatingUser) {
-			User existingUser = urepo.findById(user.getId()).get();
+			User existingUser = userRepo.findById(user.getId()).get();
 			if (user.getPassword().isEmpty()) {
 				user.setPassword(existingUser.getPassword());
 			} else {
@@ -46,7 +54,7 @@ public class UserServices {
 			encodePassword(user);
 		}
 
-		return urepo.save(user);
+		return userRepo.save(user);
 	}
 
 	private void encodePassword(User user) {
@@ -55,7 +63,7 @@ public class UserServices {
 	}
 
 	public boolean isEmailUnique(Integer id, String email) {
-		User userByEmail = urepo.getUserByEmail(email);
+		User userByEmail = userRepo.getUserByEmail(email);
 		if (userByEmail == null)
 			return true;
 		boolean isCreatingNew = (id == null);
@@ -72,22 +80,23 @@ public class UserServices {
 
 	public User get(Integer id) throws UserNotFoundException {
 		try {
-			return urepo.findById(id).get();
+			return userRepo.findById(id).get();
 		} catch (NoSuchElementException ex) {
 			throw new UserNotFoundException("Could not find any use with ID" + id);
 		}
 	}
 
 	public void delete(Integer id) throws UserNotFoundException {
-		Long countById = urepo.countById(id);
-		if(countById == null || countById == 0) {
+		Long countById = userRepo.countById(id);
+		if (countById == null || countById == 0) {
 			throw new UserNotFoundException("Could not find any use with ID" + id);
 		}
-		urepo.deleteById(id);
+		userRepo.deleteById(id);
 	}
-	
+
 	public void updateUserEnabledStatus(Integer id, boolean enabled) {
-		urepo.updateEnabledStatus(id, enabled);
-		
+		userRepo.updateEnabledStatus(id, enabled);
+
 	}
+
 }
