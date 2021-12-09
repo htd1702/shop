@@ -20,6 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.shop.admin.FileUploadUtil;
+import com.shop.admin.user.export.UserCsvExporter;
+import com.shop.admin.user.export.UserExcelExporter;
+import com.shop.admin.user.export.UserPDFExporter;
 import com.shop.common.entities.Role;
 import com.shop.common.entities.User;
 
@@ -94,6 +97,7 @@ public class UserController {
 		return getRedirectURLtoAffectedUser(user);
 	}
 
+	
 	private String getRedirectURLtoAffectedUser(User user) {
 		String firstPartOfEmail = user.getEmail().split("@")[0];
 		return "redirect:/users/page/1?sortField=id&sortDir=desc&keyword=" + firstPartOfEmail;
