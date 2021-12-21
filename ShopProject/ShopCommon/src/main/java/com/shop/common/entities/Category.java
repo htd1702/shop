@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "category")
@@ -39,9 +40,43 @@ public class Category {
 	@OneToMany(mappedBy = "parent")
 	private Set<Category> children = new HashSet<>();
 
-	public Category(Integer id) {
-		this.id=id;
+	public Category() {
 	}
+
+	public static Category copyIdAndName(Category category) {
+		Category copyCat = new Category();
+		copyCat.setId(category.getId());
+		copyCat.setName(category.getName());
+		return copyCat;
+	}
+
+	public static Category copyIdAndName(Integer id, String name) {
+		Category copyCat = new Category();
+		copyCat.setId(id);
+		copyCat.setName(name);
+		return copyCat;
+	}
+
+	public static Category CopyFull(Category category) {
+		Category copyCat = new Category();
+		copyCat.setId(category.getId());
+		copyCat.setName(category.getName());
+		copyCat.setImage(category.getImage());
+		copyCat.setAlias(category.getAlias());
+		copyCat.setEnabled(category.isEnabled());
+		return copyCat;
+	}
+
+	public static Category CopyFull(Category category, String name) {
+		Category copyCat = CopyFull(category);
+		copyCat.setName(name);
+		return copyCat;
+	}
+
+	public Category(Integer id) {
+		this.id = id;
+	}
+
 	public Category(String name) {
 		this.name = name;
 		this.alias = name;
@@ -107,6 +142,13 @@ public class Category {
 
 	public void setChildren(Set<Category> children) {
 		this.children = children;
+	}
+
+	@Transient
+	public String getImagePath() {
+		if (this.id == null)
+			return "/images/image-thumbnail.png";
+		return "/category-images/" + this.id + "/" + this.image;
 	}
 
 }
