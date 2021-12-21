@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.catalog.CatalogException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +32,7 @@ public class CategoryService {
 			for (Category subCategory : children) {
 				String name = "--" + subCategory.getName();
 				hierarchicalCategories.add(Category.CopyFull(subCategory, name));
-				listSubHierarchicalCategories(hierarchicalCategories,subCategory,1);
+				listSubHierarchicalCategories(hierarchicalCategories, subCategory, 1);
 			}
 		}
 		return hierarchicalCategories;
@@ -83,6 +85,14 @@ public class CategoryService {
 			name += subCategory.getName();
 			categoryUsedInForm.add(Category.copyIdAndName(subCategory.getId(), name));
 			listSubCategoriesUsedInForm(categoryUsedInForm, subCategory, newSubLevel);
+		}
+	}
+
+	public Category get(Integer id) throws CategoryNotFoundException {
+		try {
+			return catRepo.findById(id).get();
+		} catch (Exception e) {
+			throw new CategoryNotFoundException("Could not find any category with ID " + id);
 		}
 	}
 }
