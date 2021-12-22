@@ -64,6 +64,7 @@ public class Category {
 		copyCat.setImage(category.getImage());
 		copyCat.setAlias(category.getAlias());
 		copyCat.setEnabled(category.isEnabled());
+		copyCat.setHasChildren(category.getChildren().size() > 0);
 		return copyCat;
 	}
 
@@ -81,6 +82,13 @@ public class Category {
 		this.name = name;
 		this.alias = name;
 		this.image = "default.png";
+	}
+
+	public Category(Integer id, String name, String alias) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.alias = alias;
 	}
 
 	public Category(String name, Category parent) {
@@ -151,4 +159,14 @@ public class Category {
 		return "/category-images/" + this.id + "/" + this.image;
 	}
 
+	public boolean isHasChildren() {
+		return hasChildren;
+	}
+
+	public void setHasChildren(boolean hasChildren) {
+		this.hasChildren = hasChildren;
+	}
+
+	@Transient
+	private boolean hasChildren;
 }

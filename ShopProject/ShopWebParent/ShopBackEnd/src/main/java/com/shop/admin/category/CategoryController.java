@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -24,9 +25,14 @@ public class CategoryController {
 	private CategoryService service;
 
 	@GetMapping("/categories")
-	public String listAll(Model model) {
-		List<Category> listCategories = service.listAll();
+	public String listAll(@Param("sortDir") String sortDir, Model model) {
+		if (sortDir == null || sortDir.isEmpty()) {
+			sortDir = "asc";
+		}
+		List<Category> listCategories = service.listAll(sortDir);
+		String reverseSortDir = sortDir.equals("asc") ? "desc" : "asc";
 		model.addAttribute("listCategories", listCategories);
+		model.addAttribute("reverseSortDir", reverseSortDir);
 
 		return "categories/category";
 	}
@@ -71,11 +77,37 @@ public class CategoryController {
 			model.addAttribute("category", category);
 			model.addAttribute("listCategories", listCategories);
 			model.addAttribute("pageTitle", "EditCategory (ID: " + id + ")");
-			
+
 			return "categories/category_form";
 		} catch (CategoryNotFoundException ex) {
 			ra.addFlashAttribute("message", ex.getMessage());
 			return "redirect:/categories";
 		}
 	}
+
+	@GetMapping("/categories/{id}/enabled/{status}")
+	public String updateCategoryEnabledStatus(@PathVariable("id") Integer id, @PathVariable("status") boolean enabled,
+			RedirectAttributes redirectAttributes) {
+		service.updateCategoryEnabledStatus(id, enabled);
+		String status = enabled ? "enabled" : "disabled";
+		String message = "The category ID " + id + " has been " + status;
+		redirectAttributes.addFlashAttribute("message", message);
+		return "redirect:/categories";
+	}
+
+	@GetMapping("/categories/delete/{id}")
+	public String deleteCategory(@PathVariable(name = "id") Integer id, Model model,
+			RedirectAttributes redirectAttributes) {
+		try {
+			service.delete(id);
+			String categoryDir = "../categories-images" + id;
+			FileUploadUtil.removeDir(categoryDir);
+			redirectAttributes.addFlashAttribute("message", "The category ID " + id + " has been delete successfully");
+
+		} catch (CategoryNotFoundException ex) {
+			redirectAttributes.addFlashAttribute("message", ex.getMessage());
+		}
+		return "redirect:/categories";
+	}
+
 }
