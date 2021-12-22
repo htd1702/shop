@@ -125,6 +125,8 @@ public class UserController {
 			RedirectAttributes redirectAttributes) {
 		try {	
 			services.delete(id);
+			String categoryDir = "user-photos/" + id;
+			FileUploadUtil.removeDir(categoryDir);
 			redirectAttributes.addFlashAttribute("message", "The user ID" + id + " has been deleted successfully.");
 		} catch (UserNotFoundException ex) {
 			redirectAttributes.addFlashAttribute("message", ex.getMessage());
