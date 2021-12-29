@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "category")
+@Table(name = "categories")
 public class Category {
 
 	@Id
@@ -169,4 +169,9 @@ public class Category {
 
 	@Transient
 	private boolean hasChildren;
+
+	@Override
+	public String toString() {
+			return this.name;
+	}
 }

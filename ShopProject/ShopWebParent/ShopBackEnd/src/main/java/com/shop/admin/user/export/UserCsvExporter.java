@@ -14,7 +14,7 @@ import com.shop.common.entities.User;
 public class UserCsvExporter extends AbstractExporter {
 	public void export(List<User> listUsers, HttpServletResponse response) throws IOException {
 
-		super.setResponseHeader(response, "text/csv", ".csv");
+		super.setResponseHeader(response, "text/csv", ".csv", "users_");
 		ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
 		String[] csvHeeader = { "User ID", "E-mail", "First Name", "Last Name", "Roles", "Enabled" };
 		String[] fieldsMapping = { "id", "email", "firstName", "lastName", "roles", "enabled" };
