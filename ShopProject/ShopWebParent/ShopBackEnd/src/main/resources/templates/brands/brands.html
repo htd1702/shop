@@ -12,10 +12,8 @@
 				th:href="@{/brands/export/csv}"
 				class="fas fa-file-csv fa-2x icon-dark mr-2"></a>
 		</div>
-		<div th:if="${message != null}"
-			class=" alert alert-success text-center">[[${message}]]</div>
 
-		<div th:replace="fragments::search_form('/brands/page/1')"></div>
+		<div th:replace="fragments::search_form_and_message('/brands/page/1')"></div>
 		<div class="full-details">
 			<table
 				class="table table-bordered table-striped table-hover table-responsive-xl">
@@ -30,7 +28,7 @@
 				</thead>
 				<tbody>
 					<tr th:each="brand : ${listBrands}">
-						<td>[[${brand.id}]]</td>
+						<td class="hideable-column">[[${brand.id}]]</td>
 						<td><img th:src="@{${brand.logoPath}}" style="width: 100px"
 							class="img-fluid" /></td>
 						<td>[[${brand.name}]]</td>
@@ -38,18 +36,17 @@
 						<td><th:block th:each="cat:${brand.categories}">
 								<span class="badge badge-secondary" th:text="${cat.name}"></span>
 							</th:block></td>
-						<td><a class="fas fa-edit fa-2x icon-green"
-							th:href="@{'/brands/edit/' + ${brand.id}}"
-							title="edit this brand"></a> &nbsp; <a
-							class="fas fa-trash fa-2x icon-dark link-delete"
-							th:href="@{'/brands/delete/' + ${brand.id}}"
-							th:brandId="${brand.id}" title="delete this brand"
-							th:entityId="${brand.id}"></a></td>
+						<td>
+							<div th:replace="fragments::edit('brand','/brands/edit/' + ${brand.id})" />
+							&nbsp;
+							<div th:replace="fragments::delete('brand',${brand.id},'/brands/delete/' + ${brand.id}, true)" />
+						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 
+		
 		<div th:replace="fragments::pagination('/brands','brands')"/>		
 		<div th:replace="modal_fragments :: confirm_modal"></div>
 		<div th:replace="fragments::footer"></div>

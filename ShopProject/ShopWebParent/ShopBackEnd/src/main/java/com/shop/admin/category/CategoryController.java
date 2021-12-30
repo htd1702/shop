@@ -32,7 +32,8 @@ public class CategoryController {
 	}
 
 	@GetMapping("/categories/page/{pageNum}")
-	public String listByPage(@PathVariable(name = "pageNum") int pageNum, @Param("sortDir") String sortDir,
+	public String listByPage(@PathVariable(name = "pageNum") int pageNum,
+			@Param("sortDir") String sortDir,
 			@Param("keyword") String keyword, Model model) {
 		if (sortDir == null || sortDir.isEmpty()) {
 			sortDir = "asc";
@@ -51,7 +52,7 @@ public class CategoryController {
 		model.addAttribute("totalItems", pageInfo.getTotalElements());
 		model.addAttribute("currentPage", pageNum);
 		model.addAttribute("sortField", "name");
-		model.addAttribute("sortField", sortDir);
+		model.addAttribute("sortDir", sortDir);
 		model.addAttribute("startCount", startCount);
 		model.addAttribute("endCount", endCount);
 		model.addAttribute("keyword", keyword);
