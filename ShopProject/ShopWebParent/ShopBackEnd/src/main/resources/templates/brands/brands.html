@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments :: page_head('Brand - Shop Admin')">
+<head th:replace="fragments :: page_head('Brand - Shop Admin','none')">
 <body>
 
 	<div class="container-fluid">
@@ -19,7 +19,7 @@
 				class="table table-bordered table-striped table-hover table-responsive-xl">
 				<thead class="thead-dark">
 					<tr>
-						<th>Brand ID</th>
+						<th class="hideable-column">Brand ID</th>
 						<th>Logo</th>
 						<th th:replace="fragments :: column_link('/brands','name','Brand Name','none')"/>
 						<th>Categories</th>
