@@ -16,6 +16,7 @@
 	</div>
 	<div>
 		<form th:action="@{/products/save}" method="post" onsubmit="return checkUnique(this)"	
+			enctype="multipart/form-data"
 			 th:object="${product}">
 			<input type="hidden" th:field="*{id}" />
 			<!-- Nav tabs -->
@@ -46,7 +47,9 @@
 				  <div class="tab-pane" id="description" role="tabpanel">
 				  	<div th:replace="products/product_description :: content"></div>
 				  </div>
-				  <div class="tab-pane" id="images" role="tabpanel">Images</div>
+				  <div class="tab-pane" id="images" role="tabpanel">
+						<div th:replace="products/product_images :: content"></div>
+				  </div>
 				  <div class="tab-pane" id="details" role="tabpanel">Details</div>
 				  <div class="tab-pane p-3" id="shipping" role="tabpanel">
 					<div th:replace="products/product_shipping :: content"></div>
@@ -67,6 +70,9 @@
 </div>
 <script th:src="@{/js/common_form.js}"></script>
 <script type="text/javascript">
+	
+	MAX_FILE_SIZE=502400;//500KB  1MB = 1048576;
+	
 	moduleURL = "[[@{/products}]]";
 	brandModuleURL = "[[@{/brands}]]";
 	dropdownBrands = $("#brand");
