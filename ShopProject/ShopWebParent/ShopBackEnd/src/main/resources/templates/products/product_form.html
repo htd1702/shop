@@ -19,6 +19,8 @@
 			enctype="multipart/form-data"
 			 th:object="${product}">
 			<input type="hidden" th:field="*{id}" />
+			<input th:if="${product.category != null}" type="hidden" 
+				id="categoryId" th:value="${product.category.id}" />
 			<!-- Nav tabs -->
 			<div>
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -50,7 +52,13 @@
 				  <div class="tab-pane" id="images" role="tabpanel">
 						<div th:replace="products/product_images :: content"></div>
 				  </div>
-				  <div class="tab-pane" id="details" role="tabpanel">Details</div>
+				  <div class="tab-pane p-3" id="details" role="tabpanel">
+				  	<div th:replace="products/product_details :: content"></div>
+				  	<div>
+				  		<input type="button" class="btn btn-secondary" value="Add More Detail" 
+				  		onclick="addNextDetailSection()"/>
+				  	</div>
+				  </div>
 				  <div class="tab-pane p-3" id="shipping" role="tabpanel">
 					<div th:replace="products/product_shipping :: content"></div>
 				  </div>
@@ -68,61 +76,19 @@
 	<div th:replace="modal_fragments::modal_dialog"></div>
 	<div th:replace="fragments::footer"></div>
 </div>
-<script th:src="@{/js/common_form.js}"></script>
 <script type="text/javascript">
 	
 	MAX_FILE_SIZE=502400;//500KB  1MB = 1048576;
 	
 	moduleURL = "[[@{/products}]]";
 	brandModuleURL = "[[@{/brands}]]";
-	dropdownBrands = $("#brand");
-	dropdownCategories = $("#category");
-	$(document)	.ready(function(){
-		
-		$("#shortDescription").richText();
-		$("#fullDescription").richText();
-		
-		dropdownBrands.change(function(){
-			dropdownCategories.empty();
-			getCategories();
-		});
-		getCategories();
-	});
-	
-	function getCategories(){
-		brandId = dropdownBrands.val();
-		url = brandModuleURL + "/" + brandId + "/categories";
-	
-		$.get(url, function(responseJson){
-			$.each(responseJson, function(index, category){
-				$("<option>").val(category.id).text(category.name).appendTo(dropdownCategories);
-			});
-		});
-	}
-	
-	function checkUnique(form) {
-		productId = $("#id").val();
-		productName = $("#name").val();
-
-		csrfValue = $("input[name ='_csrf']").val();
-		url = "[[@{/products/check_unique}]]";
-		params = {id: productId, name: productName, _csrf: csrfValue};
-
-		$.post(url, params, function (response) {
-			if(response=="OK"){
-				form.submit();
-			}else if(response=="Dublicate"){
-				showWarningModel("There is another product having the name " + productName);
-			}else{
-				showErrorModel("Unknown response from server");
-			}
-		}).fail(function () {
-			showErrorModel("Could not connect to the server");
-		});
-		return false;
-	}
-	
+	defaultImageThumbnailSrc="[[@{/images/image-thumbnail.png}]]";
+	checkUniqueUrl = "[[@{/products/check_unique}]]";
 </script>
+<script th:src="@{/js/common_form.js}"></script>
+<script th:src="@{/js/product_form_overview.js}"></script>
+<script th:src="@{/js/product_form_images.js}"></script>
+<script th:src="@{/js/product_form_details.js}"></script>
 
 </body>
 
